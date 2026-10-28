@@ -1,6 +1,14 @@
 # shellyweasel.com
 
-This folder is the whole website: a one-page artist home page with a hero painting, a short bio, a live Instagram feed and a contact footer.
+This folder is the whole website: a one-page artist home page for Shelly Weasel. It's live at **https://shellyweasel.com**.
+
+The page has five parts, top to bottom:
+
+1. **Loading screen.** Watercolor blooms spread across the paper while the page loads.
+2. **Hero.** Your name beside the big painting (`images/hero.jpg`).
+3. **About.** The short bio, plus four tiles for watercolor, gouache, oil and charcoal. Each tile shows one of your paintings and links to its Instagram post.
+4. **From the studio.** Your 5 most recent Instagram posts.
+5. **Say hello.** Contact links that open an Instagram direct message to you.
 
 ---
 
@@ -30,13 +38,16 @@ When someone visits shellyweasel.com, GoDaddy sends them to GitHub, and GitHub s
 
 | File | What it is | Safe to edit? |
 |---|---|---|
-| `index.html` | The page itself: all the text, layout and colors | Yes |
-| `images/` | `hero.jpg` (the big painting at the top) and `work-1.jpg` to `work-4.jpg` (shown in the Instagram section until the first feed update) | Yes, swap them anytime |
+| `index.html` | The page itself: all the text, layout, colors and animations | Yes |
+| `images/hero.jpg` | The big painting at the top | Yes, swap it anytime |
+| `images/medium-*.jpg` | The four medium tiles: `medium-watercolor.jpg`, `medium-gouache.jpg`, `medium-oil.jpg`, `medium-charcoal.jpg` | Yes, swap them anytime |
+| `images/work-1.jpg` to `work-4.jpg` | Shown in the Instagram section until the live feed is connected | Yes |
+| `instagram/` | Your latest Instagram posts, saved automatically once the feed is connected. It doesn't exist yet. | No, it updates itself |
+| `.github/` | The job that updates the Instagram feed (`workflows/instagram.yml`) and the script it runs (`scripts/instagram.mjs`) | Only if you know what you're changing |
 | `README.md` | This guide | Yes |
-| `instagram/` | Your latest Instagram posts, saved automatically. Don't edit them by hand. | No, it updates itself |
-| `.github/` | The job that updates the Instagram feed | Only if you know what you're changing |
 | `CNAME` | One line that tells GitHub the site's name is shellyweasel.com | **No, leave it alone** |
 | `.gitignore` | Tells git to skip Mac clutter files (`.DS_Store`) | No need to touch |
+| `shelly weasel website/` | Your original hero image. It stays on your Mac and is **not** published. The site uses the copy in `images/`. | Yes |
 
 > ⚠️ Don't delete or rename `CNAME`. Without it, shellyweasel.com stops working.
 
@@ -44,44 +55,111 @@ When someone visits shellyweasel.com, GoDaddy sends them to GitHub, and GitHub s
 
 ## Making changes
 
-### Change the text
-1. Open `index.html` in a text editor such as TextEdit, VS Code or BBEdit.
-2. Find the words you want to change, such as the bio that starts `I'm Shelly Weasel` or the line `Paintings in watercolor, gouache and oil`.
-3. Change only the words between the `>` and `<` marks, then save.
+Open `index.html` in a text editor such as TextEdit, VS Code or BBEdit. To find something quickly, use **Cmd + F** to search for the words you see on the page. Change only the words between the `>` and `<` marks, then save.
+
+### Change the bio
+Search for `I'm Shelly Weasel`. The bio is three paragraphs, each wrapped in `<p ...>` and `</p>`:
+
+```html
+<p data-reveal style="--delay:.1s">I'm Shelly Weasel, a mixed-media artist …</p>
+<p data-reveal style="--delay:.2s">Most of my work starts as an idea …</p>
+<p data-reveal style="--delay:.3s">This site is home for finished pieces …</p>
+```
+
+The first paragraph shows in larger type, and the rest in smaller gray type. To add a paragraph, copy a whole `<p …>…</p>` line and change its text. The `--delay` number sets when it fades in, so keep them counting up.
+
+### Change other text
+| What | Search for |
+|---|---|
+| The line under your name at the top | `Paintings in watercolor, gouache and oil` |
+| The small label above your name | `Painter &amp; portrait artist` (`&amp;` shows as "&") |
+| The About headline | `A painter who` |
+| The handwritten caption under the hero | `from the sketchbook` |
+| A medium tile's short description | The medium's name, such as `Watercolor` |
+| The Instagram section heading and intro | `Fresh off` and `Recent paintings` |
+| The contact headline | `Commissions, questions` |
 
 ### Change the hero painting
-Replace `images/hero.jpg` with another square JPG with the same name. Update its `alt="..."` description in `index.html`.
+Replace `images/hero.jpg` with another **square** JPG with the same name. Then search `index.html` for `images/hero.jpg` and update its `alt="..."` description. That's what screen readers read aloud.
 
-### Swap an artwork image
-1. Pick a JPG image. Square images look best, because the page crops each one to a square.
-2. Name it `work-1.jpg`, `work-2.jpg`, `work-3.jpg` or `work-4.jpg`, matching the spot you want to replace.
-3. Drop it into the `images/` folder and replace the old file when asked.
-4. Optional: in `index.html`, update the description next to it (`alt="..."`). It's what screen readers say aloud.
+### Change a medium tile
+Each tile has three things to update. Here's the watercolor one:
 
-### The Instagram feed
-The "From the studio" section shows your latest Instagram posts, straight from Instagram with no third-party service in between.
+```html
+<a class="pan__well" href="https://www.instagram.com/p/BO-9WSFl8Pz/" …>
+  <img src="images/medium-watercolor.jpg" alt="Watercolor portrait of a woman …">
+</a>
+```
 
-How it works: every 6 hours, a GitHub job (`.github/workflows/instagram.yml`) asks Instagram for your newest posts and saves them into the `instagram/` folder (`feed.json` plus the images). Then it republishes the site. If there's nothing new, it does nothing. Until the first run, the section shows the images in `images/` instead.
+1. **The image:** replace `images/medium-watercolor.jpg` (or `-gouache`, `-oil`, `-charcoal`). The tile crops it to a 4:3 rectangle, so keep the subject near the middle.
+2. **The link (`href`):** the Instagram post the tile opens. Open the post on Instagram and copy its address.
+3. **The description (`alt`):** a short sentence describing the painting, for screen readers.
 
-It needs two secrets, stored in GitHub at **Settings → Secrets and variables → Actions**:
+### How people contact you
+The "just hello →" link and the "Message me" link in the footer open a direct message to **@shelly_weasel** on Instagram (`https://ig.me/m/shelly_weasel`). On phones it opens the Instagram app. On computers it opens Instagram on the web, where the visitor has to be logged in. No email address appears anywhere on the site.
+
+Messages from people you don't follow usually land in **Message requests**, so check there too.
+
+When you're logged in as @shelly_weasel and click the link yourself, you'll get a blank page, because Instagram won't open a chat with yourself. Visitors see a new message to you.
+
+### Preview before publishing
+Double-click `index.html` and it opens in your browser. Refresh the browser after each change. Nothing goes online until you publish.
+
+When you preview this way, the Instagram section always shows the images in `images/`. Browsers don't let a page opened from your Mac read the saved feed. The live site will show your posts once the feed is connected.
+
+---
+
+## The Instagram feed
+
+The "From the studio" section shows your **5 most recent** Instagram posts, straight from Instagram with no third-party service in between.
+
+**How it works:** every 6 hours, a GitHub job (`.github/workflows/instagram.yml`) asks Instagram for your 5 newest posts. It saves them into the `instagram/` folder (`feed.json` plus the images) and republishes the site. If nothing's new, it does nothing. Instagram's image links expire after a few days, which is why the images are saved rather than linked. Hover over a post to see its caption, and click it to open the post.
+
+### ⚠️ Status: not connected yet
+The job is in place, but it can't read your posts until the secrets below are added. Until then:
+- the section shows `hero.jpg` and `work-1.jpg` to `work-4.jpg`, all linking to your Instagram profile, and
+- the job fails every 6 hours, and GitHub emails you each time.
+
+To stop those emails until you're ready, go to https://github.com/weaselshelly/shellyweasel.com/actions, click **Update Instagram feed** on the left, open the **···** menu and choose **Disable workflow**. Choose **Enable workflow** in the same place later.
+
+### One-time setup
+1. **Instagram:** make @shelly_weasel a **Creator** or **Business** account (Instagram → Settings → Account type and tools). It's free. Personal accounts can't use the Instagram API.
+2. **Meta for Developers:** at https://developers.facebook.com, create an app with the **Instagram API** use case. Under **API setup with Instagram login**, add @shelly_weasel and click **Generate token**. The app can stay in development mode, since only you use it.
+3. **Save the token to GitHub.** In Terminal, run the command below and paste the token when asked. It goes straight to GitHub and isn't shown on screen.
+   ```bash
+   gh secret set IG_ACCESS_TOKEN --repo weaselshelly/shellyweasel.com
+   ```
+4. **Automatic renewal.** Instagram tokens expire after 60 days, and this lets the job renew yours every Monday.
+   1. At https://github.com/settings/personal-access-tokens, create a **fine-grained token**. Limit it to the `shellyweasel.com` repository and give it **Secrets: Read and write** permission.
+   2. Run this command and paste the new token when asked:
+   ```bash
+   gh secret set GH_PAT --repo weaselshelly/shellyweasel.com
+   ```
+5. **Run it once now:** on the Actions page, pick **Update Instagram feed** and click **Run workflow**. Within a few minutes your posts appear on the site.
+
+Both secrets live in GitHub at **Settings → Secrets and variables → Actions**:
 
 | Secret | What it is |
 |---|---|
-| `IG_ACCESS_TOKEN` | Your Instagram access token, from your app at developers.facebook.com. It lets the job read your posts. |
-| `GH_PAT` | A GitHub token that lets the job renew `IG_ACCESS_TOKEN` every Monday. Instagram tokens expire after 60 days without renewal. |
+| `IG_ACCESS_TOKEN` | Your Instagram access token. It lets the job read your posts. |
+| `GH_PAT` | A GitHub token that lets the job renew `IG_ACCESS_TOKEN` every Monday |
 
-- **Update it right now:** go to https://github.com/weaselshelly/shellyweasel.com/actions, pick **Update Instagram feed** and click **Run workflow**.
-- **If the feed stops updating:** check that page for a red ❌. The usual cause is an expired token. Generate a new one in your Meta app, then in Terminal run `gh secret set IG_ACCESS_TOKEN --repo weaselshelly/shellyweasel.com` and paste it.
-- Your Instagram account must stay a **Creator** or **Business** account. Personal accounts can't use the Instagram API.
+### If the feed stops updating
+Check the Actions page for a red ❌. The usual cause is an expired Instagram token. Generate a new one in your Meta app and save it again with the `gh secret set IG_ACCESS_TOKEN …` command above.
 
-### How people contact you
-The "just hello" link and the "Message me" link in the footer open a direct message to **@shelly_weasel** on Instagram (`https://ig.me/m/shelly_weasel`). On phones it opens the Instagram app. On computers it opens Instagram on the web, where the visitor has to be logged in. No email address appears anywhere on the site.
+---
 
-Messages from people you don't follow may land in your **Message requests** folder, so check there too.
+## Accessibility
 
-### Preview before publishing
-Double-click `index.html` and it opens in your browser. Refresh the browser after each change.
-Nothing goes online until you publish.
+The site is built to meet **WCAG 2.2 AA**, the usual standard for ADA compliance. Automated checks (axe, WAVE) found no errors at launch. Keep it that way when you make changes:
+
+- **Every image needs a short `alt` description** of what it shows.
+- **Keep text colors dark enough.** The colors are set once at the top of `index.html` (`--ink`, `--muted`, `--vermilion-ink`) and were chosen to pass. If you add colors, check them with WebAIM's contrast checker (https://webaim.org/resources/contrastchecker/). Normal text needs at least **4.5:1**.
+- **Write colors as hex (`#625a52`) or `rgba(...)`.** WAVE can't read newer color formats such as `color-mix()`. It reports them as contrast errors even when the colors are fine.
+- **Use the light red `--vermilion` only for decoration**, such as the brush-stroke underlines. For red text, use `--vermilion-ink`.
+- **Animations:** visitors who turn on "Reduce motion" on their device see the page without animations.
+
+To re-check, run the WAVE browser extension on https://shellyweasel.com. Automated tools catch only part of the problems, so also try the page using only the keyboard (Tab and Enter).
 
 ---
 
@@ -91,31 +169,35 @@ Nothing goes online until you publish.
 Ask Claude Code: **"publish my site changes."**
 
 ### Doing it yourself
-Open the Terminal app and run these three commands, one at a time:
+Open the Terminal app and run these commands, one at a time:
 
 ```bash
 cd ~/Desktop/Shelly
+git pull
 git add -A
 git commit -m "Describe what you changed"
 git push
 ```
 
+- `git pull` brings in anything changed on GitHub first, such as Instagram feed updates.
 - `git add -A` gathers up every change.
 - `git commit` saves a snapshot with a short note.
 - `git push` uploads it to GitHub.
 
 The live site updates about **1–2 minutes** after you push. If you don't see the change, refresh with **Cmd + Shift + R**.
 
-To check whether the site has finished updating, go to
-https://github.com/weaselshelly/shellyweasel.com/actions
-A green check ✅ means it's live.
+To check whether the site has finished updating, go to https://github.com/weaselshelly/shellyweasel.com/actions. A green check ✅ next to "pages build and deployment" means it's live.
+
+### Changing the Instagram job
+GitHub only lets you push changes to `.github/workflows/` if your Terminal login has the **workflow** permission. Without it, `git push` fails with *"refusing to allow an OAuth App to create or update workflow"*. Either:
+- run `gh auth refresh -h github.com -s workflow` once and approve it in the browser, or
+- edit the file directly on github.com. Open it, click the ✏️ pencil, then click **Commit changes**.
 
 ---
 
 ## Domain settings (GoDaddy)
 
-These are already set up, so you only need this section if something breaks.
-Find them at **GoDaddy → My Products → shellyweasel.com → DNS**.
+These are already set up, so you only need this section if something breaks. Find them at **GoDaddy → My Products → shellyweasel.com → DNS**.
 
 | Type | Name | Value |
 |---|---|---|
@@ -133,10 +215,7 @@ Leave all the other records alone (email, pay, ftp, NS, SOA, MX).
 
 ## The padlock (HTTPS)
 
-GitHub gives the site a free security certificate, which is what shows the padlock 🔒 in the browser. It can take up to a day to appear after the domain is first connected. Once it's ready:
-
-1. Go to https://github.com/weaselshelly/shellyweasel.com/settings/pages
-2. Tick **Enforce HTTPS**.
+The site has a free security certificate from GitHub, which is what shows the padlock 🔒 in the browser. **Enforce HTTPS** is turned on, so visitors always get the secure version. To check it, go to https://github.com/weaselshelly/shellyweasel.com/settings/pages.
 
 ---
 
@@ -145,17 +224,22 @@ GitHub gives the site a free security certificate, which is what shows the padlo
 | Problem | Try this |
 |---|---|
 | My change isn't showing | Wait 2 minutes, then refresh with Cmd + Shift + R. Check the Actions page for a green ✅. |
+| `git push` says "rejected" or "fetch first" | Run `git pull`, then `git push` again. The Instagram job may have saved new posts since your last pull. |
+| `git push` says "refusing to allow an OAuth App to … workflow" | See **Changing the Instagram job** above. |
 | `git push` asks me to log in | In Terminal, run `gh auth login --web` and follow the steps. |
+| GitHub emails me "Update Instagram feed failed" | The feed isn't connected yet, or the token expired. See **The Instagram feed** above. |
+| The Instagram section shows my old artwork instead of new posts | The feed isn't connected yet, or the job is failing. Check the Actions page. |
+| A tile or image is a blank box | Check that the file name matches exactly, such as `medium-oil.jpg` (lowercase, `.jpg` not `.jpeg` or `.png`). |
 | The site shows the old GoDaddy page | Check the DNS records above. Someone may have published the GoDaddy builder site. |
 | The site shows a GitHub "404" page | Make sure `index.html` and `CNAME` are still in the folder and were pushed. |
-| An image is a gray box | Check that the file name matches exactly, such as `work-1.jpg` (lowercase, `.jpg` not `.jpeg` or `.png`). |
 | I broke the page and want the last version back | Run `git checkout -- index.html` in Terminal. This undoes changes since your last commit. |
 
 ---
 
 ## Accounts at a glance
 
-- **GitHub:** username `weaselshelly`. It hosts the site.
-- **Meta for Developers:** your app there gives the site permission to read your Instagram posts (free).
+- **GitHub:** username `weaselshelly`. It hosts the site and runs the Instagram feed job.
+- **Instagram:** @shelly_weasel. It supplies the feed and receives contact messages. It must be a Creator or Business account for the feed.
+- **Meta for Developers:** your app there gives the site permission to read your Instagram posts. It's free, and not set up yet.
 - **GoDaddy:** owns the domain shellyweasel.com and manages its DNS. You renew the domain here every year.
-- **Cost:** GitHub Pages is free. You pay only for the GoDaddy domain renewal.
+- **Cost:** GitHub Pages and the Instagram API are free. You pay only for the GoDaddy domain renewal.
