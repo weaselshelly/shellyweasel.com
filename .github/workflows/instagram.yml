@@ -1,0 +1,62 @@
+name: Update Instagram feed
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'   # pull new posts every 6 hours
+    - cron: '43 4 * * 1'     # Mondays: also renew the access token
+  workflow_dispatch:          # "Run workflow" button on the Actions page
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: instagram
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Renew access token
+        if: github.event.schedule == '43 4 * * 1' || github.event_name == 'workflow_dispatch'
+        continue-on-error: true
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::warning::GH_PAT secret is missing, so the Instagram token can't renew itself. See README.md."
+            exit 0
+          fi
+          NEW_TOKEN=$(node .github/scripts/instagram.mjs refresh) || exit 1
+          echo "::add-mask::$NEW_TOKEN"
+          [ -n "$NEW_TOKEN" ] || exit 1
+          gh secret set IG_ACCESS_TOKEN --repo "$GITHUB_REPOSITORY" --body "$NEW_TOKEN"
+
+      - name: Fetch posts
+        env:
+          IG_ACCESS_TOKEN: ${{ secrets.IG_ACCESS_TOKEN }}
+        run: node .github/scripts/instagram.mjs
+
+      - name: Publish if anything changed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git add instagram
+          if git diff --cached --quiet; then
+            echo "No new posts."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update Instagram feed"
+          git push
+          # Pushes made by this job don't always start a Pages build on their own.
+          gh api -X POST "repos/$GITHUB_REPOSITORY/pages/builds" --silent || true
