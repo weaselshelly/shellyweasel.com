@@ -42,7 +42,7 @@ When someone visits shellyweasel.com, GoDaddy sends them to GitHub, and GitHub s
 | `images/hero.jpg` | The big painting at the top | Yes, swap it anytime |
 | `images/medium-*.jpg` | The four medium tiles: `medium-watercolor.jpg`, `medium-gouache.jpg`, `medium-oil.jpg`, `medium-charcoal.jpg` | Yes, swap them anytime |
 | `images/work-1.jpg` to `work-4.jpg` | Shown in the Instagram section until the live feed is connected | Yes |
-| `instagram/` | Your latest Instagram posts, saved automatically once the feed is connected. It's empty for now apart from a placeholder file. | No, it updates itself |
+| `instagram/` | Your 5 latest Instagram posts (`feed.json` plus images), saved automatically every 6 hours | No, it updates itself |
 | `.github/` | The job that updates the Instagram feed (`workflows/instagram.yml`) and the script it runs (`scripts/instagram.mjs`) | Only if you know what you're changing |
 | `README.md` | This guide | Yes |
 | `CNAME` | One line that tells GitHub the site's name is shellyweasel.com | **No, leave it alone** |
@@ -115,10 +115,12 @@ The "From the studio" section shows your **5 most recent** Instagram posts, stra
 
 **How it works:** every 6 hours, a GitHub job (`.github/workflows/instagram.yml`) asks Instagram for your 5 newest posts. It saves them into the `instagram/` folder (`feed.json` plus the images) and republishes the site. If nothing's new, it does nothing. Instagram's image links expire after a few days, which is why the images are saved rather than linked. Hover over a post to see its caption, and click it to open the post.
 
-### ⚠️ Status: not connected yet
-The job is in place and runs every 6 hours, but it can't read your posts until the secrets below are added. Until then, the section shows `hero.jpg` and `work-1.jpg` to `work-4.jpg`, all linking to your Instagram profile. Each run finishes with a green ✅ and the note "Instagram feed not connected yet", so GitHub doesn't send failure emails.
+### ✅ Status: connected (since Oct 28, 2026)
+The Meta app **"Shelly Weasel Site Feed"** (developers.facebook.com → My Apps) reads @shelly_weasel's posts, and the `IG_ACCESS_TOKEN` secret is saved in GitHub.
 
-### One-time setup
+⚠️ **The token expires after 60 days, around Dec 27, 2026**, unless it's renewed. To make it renew itself every Monday, finish step 4 below (`GH_PAT`). Otherwise, generate a new token in the Meta app before then and save it again.
+
+### One-time setup (steps 1–3 and 5 done)
 1. **Instagram:** make @shelly_weasel a **Creator** or **Business** account (Instagram → Settings → Account type and tools). It's free. Personal accounts can't use the Instagram API.
 2. **Meta for Developers:** at https://developers.facebook.com, create an app with the **Instagram API** use case. Under **API setup with Instagram login**, add @shelly_weasel and click **Generate token**. The app can stay in development mode, since only you use it.
 3. **Save the token to GitHub.** In Terminal, run the command below and paste the token when asked. It goes straight to GitHub and isn't shown on screen.
@@ -236,6 +238,6 @@ The site has a free security certificate from GitHub, which is what shows the pa
 
 - **GitHub:** username `weaselshelly`. It hosts the site and runs the Instagram feed job.
 - **Instagram:** @shelly_weasel. It supplies the feed and receives contact messages. It must be a Creator or Business account for the feed.
-- **Meta for Developers:** your app there gives the site permission to read your Instagram posts. It's free, and not set up yet.
+- **Meta for Developers:** your app "Shelly Weasel Site Feed" gives the site permission to read your Instagram posts. It's free.
 - **GoDaddy:** owns the domain shellyweasel.com and manages its DNS. You renew the domain here every year.
 - **Cost:** GitHub Pages and the Instagram API are free. You pay only for the GoDaddy domain renewal.
