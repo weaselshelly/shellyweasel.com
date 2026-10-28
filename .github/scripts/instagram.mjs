@@ -13,9 +13,15 @@ const OUT_DIR = path.resolve(import.meta.dirname, '../../instagram');
 const POST_COUNT = 5; // newest first, straight from the API
 
 const token = process.env.IG_ACCESS_TOKEN;
-if (!token) {
-  console.error('IG_ACCESS_TOKEN is not set. See README.md → "The Instagram feed".');
+if (!token && process.argv[2] === 'refresh') {
+  console.error('IG_ACCESS_TOKEN is not set, so there is nothing to renew.');
   process.exit(1);
+}
+if (!token) {
+  // Not connected yet: finish quietly instead of failing (and emailing) every 6 hours.
+  // The site keeps showing the images in images/ until the secret is added.
+  console.log('::notice::Instagram feed not connected yet: add the IG_ACCESS_TOKEN secret. See README.md → "The Instagram feed".');
+  process.exit(0);
 }
 
 async function api(endpoint, params) {
