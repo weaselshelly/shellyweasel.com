@@ -42,7 +42,7 @@ When someone visits shellyweasel.com, GoDaddy sends them to GitHub, and GitHub s
 | `images/hero.jpg` | The big painting at the top | Yes, swap it anytime |
 | `images/medium-*.jpg` | The four medium tiles: `medium-watercolor.jpg`, `medium-gouache.jpg`, `medium-oil.jpg`, `medium-charcoal.jpg` | Yes, swap them anytime |
 | `images/work-1.jpg` to `work-4.jpg` | Shown in the Instagram section until the live feed is connected | Yes |
-| `instagram/` | Your latest Instagram posts, saved automatically once the feed is connected. It doesn't exist yet. | No, it updates itself |
+| `instagram/` | Your latest Instagram posts, saved automatically once the feed is connected. It's empty for now apart from a placeholder file. | No, it updates itself |
 | `.github/` | The job that updates the Instagram feed (`workflows/instagram.yml`) and the script it runs (`scripts/instagram.mjs`) | Only if you know what you're changing |
 | `README.md` | This guide | Yes |
 | `CNAME` | One line that tells GitHub the site's name is shellyweasel.com | **No, leave it alone** |
@@ -116,11 +116,7 @@ The "From the studio" section shows your **5 most recent** Instagram posts, stra
 **How it works:** every 6 hours, a GitHub job (`.github/workflows/instagram.yml`) asks Instagram for your 5 newest posts. It saves them into the `instagram/` folder (`feed.json` plus the images) and republishes the site. If nothing's new, it does nothing. Instagram's image links expire after a few days, which is why the images are saved rather than linked. Hover over a post to see its caption, and click it to open the post.
 
 ### ⚠️ Status: not connected yet
-The job is in place, but it can't read your posts until the secrets below are added. Until then:
-- the section shows `hero.jpg` and `work-1.jpg` to `work-4.jpg`, all linking to your Instagram profile, and
-- the job fails every 6 hours, and GitHub emails you each time.
-
-To stop those emails until you're ready, go to https://github.com/weaselshelly/shellyweasel.com/actions, click **Update Instagram feed** on the left, open the **···** menu and choose **Disable workflow**. Choose **Enable workflow** in the same place later.
+The job is in place and runs every 6 hours, but it can't read your posts until the secrets below are added. Until then, the section shows `hero.jpg` and `work-1.jpg` to `work-4.jpg`, all linking to your Instagram profile. Each run finishes with a green ✅ and the note "Instagram feed not connected yet", so GitHub doesn't send failure emails.
 
 ### One-time setup
 1. **Instagram:** make @shelly_weasel a **Creator** or **Business** account (Instagram → Settings → Account type and tools). It's free. Personal accounts can't use the Instagram API.
@@ -227,7 +223,7 @@ The site has a free security certificate from GitHub, which is what shows the pa
 | `git push` says "rejected" or "fetch first" | Run `git pull`, then `git push` again. The Instagram job may have saved new posts since your last pull. |
 | `git push` says "refusing to allow an OAuth App to … workflow" | See **Changing the Instagram job** above. |
 | `git push` asks me to log in | In Terminal, run `gh auth login --web` and follow the steps. |
-| GitHub emails me "Update Instagram feed failed" | The feed isn't connected yet, or the token expired. See **The Instagram feed** above. |
+| GitHub emails me "Update Instagram feed failed" | The Instagram token has probably expired or is wrong. See **If the feed stops updating** above. |
 | The Instagram section shows my old artwork instead of new posts | The feed isn't connected yet, or the job is failing. Check the Actions page. |
 | A tile or image is a blank box | Check that the file name matches exactly, such as `medium-oil.jpg` (lowercase, `.jpg` not `.jpeg` or `.png`). |
 | The site shows the old GoDaddy page | Check the DNS records above. Someone may have published the GoDaddy builder site. |
