@@ -1,6 +1,6 @@
 # shellyweasel.com
 
-This folder is the whole website. It's a single "Coming soon" page that shows four pieces of artwork.
+This folder is the whole website: a one-page artist home page with a hero painting, a short bio, a live Instagram feed and a contact footer.
 
 ---
 
@@ -31,8 +31,10 @@ When someone visits shellyweasel.com, GoDaddy sends them to GitHub, and GitHub s
 | File | What it is | Safe to edit? |
 |---|---|---|
 | `index.html` | The page itself: all the text, layout and colors | Yes |
-| `images/` | The four artwork images (`work-1.jpg` to `work-4.jpg`) | Yes, swap them anytime |
+| `images/` | `hero.jpg` (the big painting at the top) and `work-1.jpg` to `work-4.jpg` (shown in the Instagram section until the first feed update) | Yes, swap them anytime |
 | `README.md` | This guide | Yes |
+| `instagram/` | Your latest Instagram posts, saved automatically. Don't edit them by hand. | No, it updates itself |
+| `.github/` | The job that updates the Instagram feed | Only if you know what you're changing |
 | `CNAME` | One line that tells GitHub the site's name is shellyweasel.com | **No, leave it alone** |
 | `.gitignore` | Tells git to skip Mac clutter files (`.DS_Store`) | No need to touch |
 
@@ -44,14 +46,38 @@ When someone visits shellyweasel.com, GoDaddy sends them to GitHub, and GitHub s
 
 ### Change the text
 1. Open `index.html` in a text editor such as TextEdit, VS Code or BBEdit.
-2. Find the words you want to change, such as `Coming`, `soon.` or `A new home for my work is taking shape.`
+2. Find the words you want to change, such as the bio that starts `I'm Shelly Weasel` or the line `Paintings in watercolor, gouache and oil`.
 3. Change only the words between the `>` and `<` marks, then save.
 
+### Change the hero painting
+Replace `images/hero.jpg` with another square JPG with the same name. Update its `alt="..."` description in `index.html`.
+
 ### Swap an artwork image
-1. Pick a JPG image. Upright images look best, because the page crops each one to a 4:5 shape.
+1. Pick a JPG image. Square images look best, because the page crops each one to a square.
 2. Name it `work-1.jpg`, `work-2.jpg`, `work-3.jpg` or `work-4.jpg`, matching the spot you want to replace.
 3. Drop it into the `images/` folder and replace the old file when asked.
 4. Optional: in `index.html`, update the description next to it (`alt="..."`). It's what screen readers say aloud.
+
+### The Instagram feed
+The "From the studio" section shows your latest Instagram posts, straight from Instagram with no third-party service in between.
+
+How it works: every 6 hours, a GitHub job (`.github/workflows/instagram.yml`) asks Instagram for your newest posts and saves them into the `instagram/` folder (`feed.json` plus the images). Then it republishes the site. If there's nothing new, it does nothing. Until the first run, the section shows the images in `images/` instead.
+
+It needs two secrets, stored in GitHub at **Settings → Secrets and variables → Actions**:
+
+| Secret | What it is |
+|---|---|
+| `IG_ACCESS_TOKEN` | Your Instagram access token, from your app at developers.facebook.com. It lets the job read your posts. |
+| `GH_PAT` | A GitHub token that lets the job renew `IG_ACCESS_TOKEN` every Monday. Instagram tokens expire after 60 days without renewal. |
+
+- **Update it right now:** go to https://github.com/weaselshelly/shellyweasel.com/actions, pick **Update Instagram feed** and click **Run workflow**.
+- **If the feed stops updating:** check that page for a red ❌. The usual cause is an expired token. Generate a new one in your Meta app, then in Terminal run `gh secret set IG_ACCESS_TOKEN --repo weaselshelly/shellyweasel.com` and paste it.
+- Your Instagram account must stay a **Creator** or **Business** account. Personal accounts can't use the Instagram API.
+
+### How people contact you
+The "just hello" link and the "Message me" link in the footer open a direct message to **@shelly_weasel** on Instagram (`https://ig.me/m/shelly_weasel`). On phones it opens the Instagram app. On computers it opens Instagram on the web, where the visitor has to be logged in. No email address appears anywhere on the site.
+
+Messages from people you don't follow may land in your **Message requests** folder, so check there too.
 
 ### Preview before publishing
 Double-click `index.html` and it opens in your browser. Refresh the browser after each change.
@@ -130,5 +156,6 @@ GitHub gives the site a free security certificate, which is what shows the padlo
 ## Accounts at a glance
 
 - **GitHub:** username `weaselshelly`. It hosts the site.
+- **Meta for Developers:** your app there gives the site permission to read your Instagram posts (free).
 - **GoDaddy:** owns the domain shellyweasel.com and manages its DNS. You renew the domain here every year.
 - **Cost:** GitHub Pages is free. You pay only for the GoDaddy domain renewal.
